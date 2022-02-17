@@ -24,13 +24,28 @@ async function run() {
       await client.connect();
       const database = client.db("onlineCourses");
       const courseCollection = database.collection("courses");
+      const orderCollection = database.collection("orders");
 
       // GET METHOD
-      // GET ALL APARTMENTS
+      // GET ALL COURSES
       app.get("/courses", async (req, res) => {
         const cursor = courseCollection.find({});
         const total = await cursor.toArray();
         res.send(total);
+      });
+      // GET A COURSES BY ID
+      app.get("/course/:id", async (req, res) => {
+        const id = req.params.id;
+        const query = { _id: ObjectId(id) };
+        const result = await courseCollection.findOne(query);
+        console.log(result);
+        res.send(result);
+      });
+      // GET ALL ORDERS
+      app.get("/orders", async (req, res) => {
+        const cursor = orderCollection.find({});
+        const orders = await cursor.toArray();
+        res.json(orders);
       });
 
       // POST METHOD
@@ -38,11 +53,15 @@ async function run() {
       app.post("/courses", async (req, res) => {
         const course = req.body;
         console.log(course);
-        const result = await apartmentCollection.insertOne(course);
+        const result = await courseCollection.insertOne(course);
         res.json(result);
       });
-        
-        
+      // POST AN ORDER  
+      app.post("/orders", async (req, res) => {
+        const apartment = req.body;
+        const result = await orderCollection.insertOne(apartment);
+        res.json(result);
+      });
     } finally  {
         // await client.close()
     }
