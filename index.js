@@ -21,6 +21,27 @@ const client = new MongoClient(uri, {
 async function run() {
     console.log('server connected successfully')
     try {
+      await client.connect();
+      const database = client.db("onlineCourses");
+      const courseCollection = database.collection("courses");
+
+      // GET METHOD
+      // GET ALL APARTMENTS
+      app.get("/courses", async (req, res) => {
+        const cursor = courseCollection.find({});
+        const total = await cursor.toArray();
+        res.send(total);
+      });
+
+      // POST METHOD
+      //   ADD AN APARTMENT APARTMENT COLLECTION
+      app.post("/courses", async (req, res) => {
+        const course = req.body;
+        console.log(course);
+        const result = await apartmentCollection.insertOne(course);
+        res.json(result);
+      });
+        
         
     } finally  {
         // await client.close()
